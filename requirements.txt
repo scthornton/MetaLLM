@@ -1,0 +1,58 @@
+# MetaLLM Framework Dependencies
+
+# Core Framework
+click>=8.1.0
+rich>=13.0.0
+pydantic>=2.0.0
+structlog>=23.0.0
+pyyaml>=6.0
+prompt-toolkit>=3.0.0
+
+# HTTP & Networking
+httpx>=0.25.0
+requests>=2.31.0
+urllib3>=2.0.0
+
+# AI/ML Libraries
+openai>=1.0.0
+anthropic>=0.7.0
+langchain>=0.1.0
+sentence-transformers>=2.2.0
+
+# Adversarial ML
+adversarial-robustness-toolbox>=1.15.0
+foolbox>=3.3.0
+
+# ML Frameworks
+torch>=2.0.0
+transformers>=4.35.0
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Vector Databases
+chromadb>=0.4.0
+pinecone-client>=2.2.0
+weaviate-client>=3.25.0
+
+# MLOps Platforms
+mlflow>=2.8.0
+wandb>=0.16.0
+
+# Network Tools
+scapy>=2.5.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-mock>=3.12.0
+
+# Development
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.7.0
+pre-commit>=3.5.0
+
+# Documentation
+mkdocs>=1.5.0
+mkdocs-material>=9.4.0
