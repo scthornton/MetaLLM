@@ -1,0 +1,12 @@
+# MetaLLM GCP Test Lab Configuration
+# Copy this file to terraform.tfvars and fill in your values
+
+# Required Variables
+project_id  = "your-gcp-project-id"
+owner_email = "your-email@example.com"
+
+# Optional Variables (defaults shown)
+region              = "us-central1"
+zone                = "us-central1-a"
+use_spot_instances  = true   # Use preemptible for 60-90% cost savings
+enable_gpu          = true   # Enable GPU instances for LLM testing
