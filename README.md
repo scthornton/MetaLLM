@@ -347,8 +347,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Website:** [perfecXion.ai](https://perfecxion.ai)
 - **Issues:** [GitHub Issues](https://github.com/perfecXion/MetaLLM/issues)
-- **Email:** security@perfecxion.ai
-- **Twitter:** [@perfecXion_ai](https://twitter.com/perfecXion_ai)
+- **Email:** scott@perfecxion.ai
+
 
 ## 🔗 Related Projects
 
