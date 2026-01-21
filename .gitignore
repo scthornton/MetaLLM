@@ -178,3 +178,18 @@ logs/
 # Artifacts
 artifacts/
 output/
+
+# AI tool artifacts (prevent accidental commits)
+.claude/
+claude.md
+CLAUDE.md
+planning.md
+status.md
+notes.md
+todo.md
+*.chat
+*.conversation
+BUILD_SUMMARY.md
+PROGRESS_REPORT.md
+STATUS.md
+SETUP_COMPLETE.md
