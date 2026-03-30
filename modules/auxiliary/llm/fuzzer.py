@@ -12,10 +12,7 @@ import random
 import string
 import time
 from typing import Optional, Dict, Any, List
-from metaLLM.base.module import AuxiliaryModule
-from metaLLM.base.option import Option, OptionType
-from metaLLM.base.result import Result, ResultStatus
-from metaLLM.base.target import LLMTarget
+from metallm.base import AuxiliaryModule, Option, OptionType, Result, ResultStatus, LLMTarget
 
 
 class PromptFuzzer(AuxiliaryModule):
