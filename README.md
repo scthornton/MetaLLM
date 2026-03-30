@@ -1,373 +1,327 @@
-# MetaLLM: Enterprise AI/ML Security Testing Framework
+# MetaLLM v2.0 -- AI/ML Security Testing Framework
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![OWASP LLM Top 10](https://img.shields.io/badge/OWASP-LLM%20Top%2010-red.svg)](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+[![OWASP LLM Top 10 2025](https://img.shields.io/badge/OWASP-LLM%20Top%2010%202025-red.svg)](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+[![Modules: 61](https://img.shields.io/badge/modules-61-green.svg)](#module-categories)
+[![Tests: 137](https://img.shields.io/badge/tests-137-brightgreen.svg)](#testing)
 
-MetaLLM is a comprehensive, Metasploit-inspired security testing framework specifically designed for Large Language Models (LLMs), AI agents, RAG systems, and ML infrastructure. It provides security researchers and penetration testers with a systematic approach to identifying vulnerabilities in AI/ML deployments.
+MetaLLM is a Metasploit-inspired security testing framework purpose-built for AI and ML systems. It provides 61 working modules spanning LLM prompt attacks, RAG poisoning, agentic AI exploitation, MLOps infrastructure compromise, API security testing, and network-layer ML attacks -- all driven through an interactive CLI with tab completion, session tracking, and structured reporting mapped to MITRE ATLAS and OWASP LLM Top 10 2025.
 
-## 🎯 Key Features
+## What Makes MetaLLM Different
 
-- **40+ Exploit Modules** covering OWASP LLM Top 10 vulnerabilities
-- **15+ Auxiliary Modules** for reconnaissance and security assessment
-- **Interactive CLI** with Metasploit-style interface
-- **Modular Architecture** for easy extension and customization
-- **Comprehensive Coverage** of LLM, RAG, Agent, MLOps, and API security
-- **Enterprise-Ready** with structured logging and detailed reporting
+There are other AI security testing tools. Here is where MetaLLM fits relative to them:
 
-## 📚 Table of Contents
+| Capability | MetaLLM | Garak | PyRIT | Promptfoo |
+|---|---|---|---|---|
+| Metasploit-style operator workflow (`use` / `set` / `run` / `sessions`) | Yes | No | No | No |
+| Full-stack coverage (network to model to agent) | Yes | No | Partial | No |
+| MCP tool poisoning module | Yes | No | No | No |
+| Multi-turn adaptive jailbreaks (crescendo, context buildup) | Yes | No | Yes | No |
+| MLOps infrastructure exploits (Jupyter, MLflow, W&B, TensorBoard) | Yes | No | No | No |
+| Session manager with loot tracking | Yes | No | No | No |
+| SQLite target database for engagement persistence | Yes | No | No | No |
+| MITRE ATLAS + OWASP mapping in reports | Yes | No | Partial | Partial |
 
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Architecture](#architecture)
-- [Module Categories](#module-categories)
-- [Usage Examples](#usage-examples)
-- [Documentation](#documentation)
-- [Responsible Use](#responsible-use)
-- [Contributing](#contributing)
-- [License](#license)
+MetaLLM is not a replacement for any of these tools. It fills a gap: an operator-oriented framework for hands-on AI red team engagements that covers the full attack surface from network reconnaissance through model exploitation to post-exploitation loot collection.
 
-## 🚀 Installation
+## Quick Start
 
 ### Prerequisites
 
-- Python 3.9 or higher
-- pip package manager
-- Virtual environment (recommended)
+- Python 3.10 or higher
+- pip
 
-### Standard Installation
+### Install
 
 ```bash
-# Clone the repository
-git clone https://github.com/perfecXion/MetaLLM.git
+git clone https://github.com/perfecXion-ai/MetaLLM.git
 cd MetaLLM
 
-# Create virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
-# Install dependencies
 pip install -r requirements.txt
-
-# Verify installation
-python metalllm.py --help
 ```
 
-### Development Installation
+### Launch
 
 ```bash
-# Install with development dependencies
-pip install -r requirements-dev.txt
-
-# Run tests
-pytest tests/
-
-# Check code quality
-black . --check
-flake8 .
+python metallm.py
 ```
 
-## ⚡ Quick Start
+### Basic Workflow
 
-### Interactive Mode
-
-```bash
-# Launch MetaLLM CLI
-python metalllm.py
-
-# Basic workflow
+```
 metalllm> use exploit/llm/prompt_injection
 metalllm exploit(prompt_injection)> show options
-metalllm exploit(prompt_injection)> set TARGET_URL http://target.com/api/chat
-metalllm exploit(prompt_injection)> set ATTACK_TYPE context_switch
+metalllm exploit(prompt_injection)> set TARGET_URL http://target.example.com/api/chat
+metalllm exploit(prompt_injection)> set PROVIDER openai
+metalllm exploit(prompt_injection)> set MODEL gpt-4
 metalllm exploit(prompt_injection)> run
+
+metalllm> sessions -l          # List active sessions
+metalllm> sessions -i 1        # Interact with session 1
+metalllm> report generate       # Generate assessment report
 ```
 
-### Command-Line Mode
+### CLI Commands
 
-```bash
-# Run specific exploit
-python metalllm.py --module exploit/llm/prompt_injection --set TARGET_URL=http://target.com/api/chat --run
+| Command | Description |
+|---|---|
+| `use <module>` | Select a module |
+| `show options` | Display configurable options for the active module |
+| `set <OPTION> <value>` | Set a module option |
+| `run` | Execute the active module |
+| `check` | Probe the target without full exploitation |
+| `search <term>` | Search modules by name or keyword |
+| `show modules` | List all available modules |
+| `sessions -l` | List active sessions |
+| `sessions -i <id>` | Interact with a session |
+| `targets` | Manage the target database |
+| `report generate` | Generate HTML/Markdown/JSON report |
+| `back` | Deselect the active module |
+| `help` | Show available commands |
 
-# Scan for vulnerabilities
-python metalllm.py --module auxiliary/scanner/llm_api_scanner --set TARGET_HOST=target.com --run
+## Module Categories
 
-# List all modules
-python metalllm.py --list-modules
-```
+### Exploit Modules (44)
 
-## 🏗️ Architecture
+**LLM -- 12 modules**
 
-MetaLLM follows a modular architecture inspired by Metasploit:
+| Module | Description |
+|---|---|
+| `exploit/llm/prompt_injection` | Multi-technique prompt injection |
+| `exploit/llm/prompt_injection_basic` | Basic prompt injection patterns |
+| `exploit/llm/prompt_injection_advanced` | Advanced injection with context manipulation |
+| `exploit/llm/jailbreak` | Standard jailbreak techniques |
+| `exploit/llm/jailbreak_dan` | DAN-style jailbreak variants |
+| `exploit/llm/system_prompt_leak` | System prompt leakage via indirect methods |
+| `exploit/llm/system_prompt_extraction` | Direct system prompt extraction (multi-technique) |
+| `exploit/llm/context_manipulation` | Context window manipulation attacks |
+| `exploit/llm/adaptive_jailbreak` | Multi-turn adaptive jailbreaks (crescendo, context buildup) |
+| `exploit/llm/flipattack` | FlipAttack -- word/segment reversal bypass |
+| `exploit/llm/encoding_bypass` | Base64, ROT13, hex, unicode encoding bypasses |
+| -- | *(11 unique modules; prompt_injection counted once)* |
+
+**RAG -- 5 modules**
+
+| Module | Description |
+|---|---|
+| `exploit/rag/vector_injection` | Inject adversarial vectors into retrieval pipeline |
+| `exploit/rag/document_poisoning` | Poison documents ingested by RAG systems |
+| `exploit/rag/knowledge_corruption` | Corrupt knowledge base entries |
+| `exploit/rag/retrieval_manipulation` | Manipulate retrieval ranking and results |
+| `exploit/rag/poisoning` | General RAG poisoning techniques |
+
+**Agent / MCP -- 10 modules**
+
+| Module | Description |
+|---|---|
+| `exploit/agent/goal_hijacking` | Redirect agent goals via injected instructions |
+| `exploit/agent/tool_misuse` | Abuse agent tool-calling interfaces |
+| `exploit/agent/memory_manipulation` | Tamper with agent memory stores |
+| `exploit/agent/plugin_abuse` | Exploit plugin loading and execution |
+| `exploit/agent/langchain_rce` | LangChain RCE via unsafe deserialization |
+| `exploit/agent/langchain_tool_injection` | Inject malicious tools into LangChain agents |
+| `exploit/agent/crewai_task_manipulation` | Manipulate CrewAI task definitions |
+| `exploit/agent/autogpt_goal_corruption` | Corrupt AutoGPT goal state |
+| `exploit/agent/protocol_message_injection` | Inject messages into agent protocol layer |
+| `exploit/agent/mcp_tool_poisoning` | Poison MCP tool definitions and responses |
+
+**MLOps Infrastructure -- 9 modules**
+
+| Module | Description |
+|---|---|
+| `exploit/mlops/pickle_deserialization` | Pickle deserialization RCE |
+| `exploit/mlops/mlflow_model_poison` | MLflow model poisoning |
+| `exploit/mlops/mlflow_model_poisoning` | MLflow model registry poisoning variant |
+| `exploit/mlops/jupyter_rce` | Jupyter Notebook RCE |
+| `exploit/mlops/jupyter_notebook_rce` | Jupyter Notebook kernel exploitation |
+| `exploit/mlops/wandb_credential_theft` | Weights & Biases credential extraction |
+| `exploit/mlops/wandb_data_exfiltration` | W&B experiment data exfiltration |
+| `exploit/mlops/model_registry_manipulation` | Model registry tampering |
+| `exploit/mlops/tensorboard_attack` | TensorBoard exploitation |
+
+**API -- 3 modules**
+
+| Module | Description |
+|---|---|
+| `exploit/api/api_key_extraction` | Extract API keys from LLM responses and configs |
+| `exploit/api/excessive_agency` | Test for excessive agency / over-permissioned actions |
+| `exploit/api/unauthorized_access` | API authorization bypass |
+
+**Network -- 5 modules**
+
+| Module | Description |
+|---|---|
+| `exploit/network/adversarial_examples` | Craft adversarial inputs for ML models |
+| `exploit/network/model_extraction` | Model stealing via API queries |
+| `exploit/network/model_inversion` | Reconstruct training data from model outputs |
+| `exploit/network/membership_inference` | Determine if data was in the training set |
+| `exploit/network/api_key_harvesting` | Harvest API keys from network traffic |
+
+### Auxiliary Modules (16)
+
+**Scanner -- 5 modules**
+
+| Module | Description |
+|---|---|
+| `auxiliary/scanner/llm_api_scanner` | Discover LLM API endpoints |
+| `auxiliary/scanner/mlops_discovery` | Find MLOps platforms (MLflow, Kubeflow, etc.) |
+| `auxiliary/scanner/rag_endpoint_enum` | Enumerate RAG system endpoints |
+| `auxiliary/scanner/agent_framework_detect` | Detect agent frameworks in use |
+| `auxiliary/scanner/ai_service_port_scan` | Port scan for AI/ML services |
+
+**Fingerprint -- 4 modules**
+
+| Module | Description |
+|---|---|
+| `auxiliary/fingerprint/llm_model_detector` | Identify which LLM is behind an API |
+| `auxiliary/fingerprint/capability_prober` | Probe model capabilities and limits |
+| `auxiliary/fingerprint/safety_filter_detect` | Detect and characterize safety filters |
+| `auxiliary/fingerprint/embedding_model_id` | Identify embedding models |
+
+**Discovery -- 3 modules**
+
+| Module | Description |
+|---|---|
+| `auxiliary/discovery/vector_db_enum` | Enumerate vector databases (Pinecone, Weaviate, Qdrant, etc.) |
+| `auxiliary/discovery/model_registry_scan` | Scan model registries |
+| `auxiliary/discovery/training_infra_disc` | Discover training infrastructure |
+
+**DoS Testing -- 3 modules**
+
+| Module | Description |
+|---|---|
+| `auxiliary/dos/token_exhaustion` | Token budget exhaustion |
+| `auxiliary/dos/rate_limit_test` | Rate limit boundary testing |
+| `auxiliary/dos/context_overflow` | Context window overflow |
+
+**LLM Auxiliary -- 2 modules**
+
+| Module | Description |
+|---|---|
+| `auxiliary/llm/fingerprint` | LLM fingerprinting via behavioral analysis |
+| `auxiliary/llm/fuzzer` | LLM input fuzzing |
+
+### Post-Exploitation (1)
+
+| Module | Description |
+|---|---|
+| `post/llm/context_extraction` | Extract conversation context and data from compromised sessions |
+
+## Architecture Overview
 
 ```
 MetaLLM/
-├── metalllm.py              # Main CLI interface
+├── metallm.py                  # Entry point -- launches interactive CLI
+├── cli/
+│   ├── console.py              # REPL with tab completion and command history
+│   ├── commands.py             # Command implementations
+│   ├── completer.py            # Tab completion engine
+│   └── formatter.py            # Output formatting
+├── metallm/
+│   ├── base/                   # Base classes: Module, Target, Result, Option
+│   └── core/
+│       ├── module_loader.py    # Dynamic module discovery and loading
+│       ├── session.py          # Session manager (active sessions, loot)
+│       ├── db.py               # SQLite target database
+│       ├── llm_client.py       # Unified LLM client (OpenAI, Anthropic, Ollama, Google, generic HTTP)
+│       └── reporting.py        # Report generation with MITRE ATLAS + OWASP mapping
 ├── modules/
-│   ├── exploits/            # Exploitation modules
-│   │   ├── llm/            # LLM-specific exploits
-│   │   ├── rag/            # RAG system exploits
-│   │   ├── agent/          # AI agent exploits
-│   │   ├── mlops/          # MLOps infrastructure exploits
-│   │   └── api/            # API security exploits
-│   └── auxiliary/           # Reconnaissance modules
-│       ├── scanner/        # Port/service scanning
-│       ├── fingerprint/    # Model identification
-│       ├── discovery/      # Infrastructure discovery
-│       └── dos/            # DoS testing
-├── core/
-│   ├── cli.py              # CLI implementation
-│   ├── module_manager.py   # Module loading and management
-│   └── logger.py           # Structured logging
-└── docs/                    # Documentation
+│   ├── exploits/               # 44 exploit modules
+│   │   ├── llm/                # Prompt injection, jailbreaks, extraction
+│   │   ├── rag/                # Vector injection, poisoning, corruption
+│   │   ├── agent/              # Goal hijacking, MCP poisoning, RCE
+│   │   ├── mlops/              # Pickle deser, MLflow, Jupyter, W&B
+│   │   ├── api/                # Key extraction, excessive agency
+│   │   └── network/            # Model extraction, adversarial examples
+│   ├── auxiliary/              # 16 auxiliary modules
+│   │   ├── scanner/            # API scanning, port scanning
+│   │   ├── fingerprint/        # Model detection, filter detection
+│   │   ├── discovery/          # Vector DB, registry, infra discovery
+│   │   ├── dos/                # Token exhaustion, rate limits
+│   │   └── llm/                # Fingerprinting, fuzzing
+│   └── post/                   # 1 post-exploitation module
+└── tests/                      # 120 unit + 17 integration tests
 ```
 
-## 📦 Module Categories
+### Key Components
 
-### Exploit Modules (40+)
+**Unified LLM Client** -- Modules do not make raw HTTP calls. `LLMClient` handles provider-specific request formatting for OpenAI, Anthropic, Ollama, Google (Gemini), and any OpenAI-compatible endpoint. Modules call `client.send(prompt)` and get text back.
 
-#### LLM Exploits (15 modules)
-- Prompt Injection (6 attack types)
-- Jailbreak Techniques (5 methods)
-- Training Data Extraction (4 techniques)
-- Model Inversion Attacks
-- Membership Inference
-- Backdoor Triggers
-- Adversarial Perturbations
-- Output Manipulation
-- Toxicity Injection
-- And more...
+**Session Manager** -- After successful exploitation, a session is created with loot storage. Operators can list sessions, interact with them, background them, and close them -- exactly like Metasploit.
 
-#### RAG System Exploits (10 modules)
-- Context Poisoning (5 techniques)
-- Retrieval Manipulation
-- Vector Database Poisoning
-- Knowledge Base Corruption
-- Document Injection
-- Embedding Manipulation
-- Cross-Context Leakage
-- Citation Manipulation
-- Metadata Poisoning
-- Shadow Knowledge Attacks
+**Target Database** -- SQLite-backed persistence for targets, engagements, findings, and loot. Resume work across sessions without re-entering target information.
 
-#### Agent Exploits (7 modules)
-- Goal Hijacking (4 techniques)
-- Tool Misuse
-- Recursive Prompt Injection
-- Memory Poisoning
-- Multi-Agent Coordination Attacks
-- LangChain RCE (CVE-2023-34540)
-- Function Calling Abuse
+**Reporting Engine** -- Generates self-contained HTML, Markdown, and JSON reports. Every finding is mapped to MITRE ATLAS techniques (49 technique IDs) and OWASP LLM Top 10 2025 categories.
 
-#### MLOps Exploits (6 modules)
-- Pickle Deserialization RCE (CVE-2024-3651)
-- MLflow Model Poisoning (CVE-2023-6014)
-- Jupyter Notebook RCE (CVE-2022-29238)
-- W&B Credential Theft
-- Model Registry Tampering
-- Training Pipeline Poisoning
+## Testing
 
-#### API Exploits (2 modules)
-- API Key Extraction (5 techniques)
-- Authentication Bypass
+MetaLLM has 137 tests: 120 unit tests covering base classes, module loading, and core framework, plus 17 integration tests that run real exploits against a live Ollama instance.
 
-### Auxiliary Modules (15)
-
-#### Scanners (5 modules)
-- LLM API Scanner
-- MLOps Infrastructure Discovery
-- RAG Endpoint Enumeration
-- Agent Framework Detection
-- AI Service Port Scanner
-
-#### Fingerprinting (4 modules)
-- LLM Model Detector
-- Capability Prober
-- Safety Filter Detection
-- Embedding Model Identification
-
-#### Discovery (3 modules)
-- Vector Database Enumeration
-- Model Registry Scanner
-- Training Infrastructure Discovery
-
-#### DoS Testing (3 modules)
-- Token Exhaustion
-- Rate Limit Testing
-- Context Window Overflow
-
-## 💡 Usage Examples
-
-### Example 1: Prompt Injection Testing
-
-```python
-# Test for prompt injection vulnerabilities
-python metalllm.py
-
-metalllm> use exploit/llm/prompt_injection
-metalllm exploit(prompt_injection)> set TARGET_URL http://chatbot.example.com/api/chat
-metalllm exploit(prompt_injection)> set ATTACK_TYPE context_switch
-metalllm exploit(prompt_injection)> check  # Verify target is accessible
-metalllm exploit(prompt_injection)> run    # Execute attack
-```
-
-### Example 2: RAG System Reconnaissance
+### Run Unit Tests
 
 ```bash
-# Discover RAG components
-metalllm> use auxiliary/scanner/rag_endpoint_enum
-metalllm auxiliary(rag_endpoint_enum)> set TARGET_HOST rag.example.com
-metalllm auxiliary(rag_endpoint_enum)> set ENUM_COLLECTIONS true
-metalllm auxiliary(rag_endpoint_enum)> run
-
-# Identify vector database
-metalllm> use auxiliary/discovery/vector_db_enum
-metalllm auxiliary(vector_db_enum)> set TARGET_URL http://rag.example.com:6333
-metalllm auxiliary(vector_db_enum)> set DB_TYPE auto
-metalllm auxiliary(vector_db_enum)> run
+pytest tests/test_base.py -v
 ```
 
-### Example 3: MLOps Security Assessment
+### Run Integration Tests (requires local Ollama with llama3.2:1b)
 
 ```bash
-# Scan for MLOps platforms
-metalllm> use auxiliary/scanner/mlops_discovery
-metalllm auxiliary(mlops_discovery)> set TARGET_HOST mlops.example.com
-metalllm auxiliary(mlops_discovery)> set SCAN_PLATFORMS all
-metalllm auxiliary(mlops_discovery)> run
-
-# Test for pickle deserialization vulnerabilities
-metalllm> use exploit/mlops/pickle_deserialization
-metalllm exploit(pickle_deserialization)> set ATTACK_TYPE rce_payload
-metalllm exploit(pickle_deserialization)> run
+ollama pull llama3.2:1b
+pytest tests/test_integration_ollama.py -v -s -m integration
 ```
 
-### Example 4: Agent Framework Testing
+Integration tests validate that modules actually work end-to-end:
 
-```bash
-# Detect agent framework
-metalllm> use auxiliary/scanner/agent_framework_detect
-metalllm auxiliary(agent_framework_detect)> set TARGET_HOST agent.example.com
-metalllm auxiliary(agent_framework_detect)> set DETECT_TOOLS true
-metalllm auxiliary(agent_framework_detect)> run
+- **System Prompt Extraction** -- Runs all extraction techniques against a known system prompt. Verifies the module extracts recognizable content (e.g., keywords from the target prompt).
+- **Encoding Bypass** -- Tests base64, ROT13, hex, unicode, and other encoding techniques. Verifies the module executes all techniques without errors.
+- **FlipAttack** -- Tests word reversal, segment reversal, and all flip techniques. Verifies multi-technique execution and scoring.
+- **Adaptive Jailbreak** -- Runs crescendo and context buildup strategies over multiple conversation turns. Verifies multi-turn state management and alternating user/assistant message flow.
+- **LLM Client** -- Direct tests against Ollama: basic send, system prompt influence, conversation history, and response timing.
 
-# Test for goal hijacking
-metalllm> use exploit/agent/goal_hijacking
-metalllm exploit(goal_hijacking)> set TARGET_URL http://agent.example.com/api/agent
-metalllm exploit(goal_hijacking)> set ATTACK_TYPE task_injection
-metalllm exploit(goal_hijacking)> run
-```
+These are not mocked. Every test sends real prompts to a real model and validates real responses.
 
-## 📖 Documentation
+## Responsible Use
 
-Comprehensive documentation is available in the `docs/` directory:
+MetaLLM is a security testing tool. It is designed for authorized use only.
 
-- **[Architecture Guide](docs/ARCHITECTURE.md)** - System design and module structure
-- **[User Guide](docs/USER_GUIDE.md)** - Detailed usage instructions
-- **[Developer Guide](docs/DEVELOPER_GUIDE.md)** - Contributing and extending modules
-- **[API Reference](docs/API_REFERENCE.md)** - Module API documentation
-- **[Security Policy](docs/SECURITY.md)** - Responsible use guidelines
+**Requirements for use:**
+- Obtain explicit written authorization before testing any system you do not own
+- Conduct testing only in authorized environments
+- Follow coordinated vulnerability disclosure for any findings
+- Comply with all applicable laws and regulations
+- Use results to improve defenses, not to cause harm
 
-## 🔒 Responsible Use
+**Do not use MetaLLM for:**
+- Unauthorized access to any system
+- Attacks against production systems without authorization
+- Data theft or exfiltration
+- Any activity that violates applicable law
 
-MetaLLM is designed for **authorized security testing only**. Users must:
+The authors are not responsible for misuse. Users bear sole responsibility for compliance with all applicable laws and regulations.
 
-- ✅ Obtain explicit written permission before testing any system
-- ✅ Conduct testing only in authorized lab environments
-- ✅ Follow responsible disclosure practices for vulnerabilities
-- ✅ Comply with all applicable laws and regulations
-- ✅ Use findings to improve AI security defenses
+## Contributing
 
-**Never use MetaLLM for:**
-- ❌ Unauthorized access to systems
-- ❌ Malicious attacks or data theft
-- ❌ Disrupting production services
-- ❌ Any illegal activities
+Contributions are welcome. To add a module:
 
-See [SECURITY.md](docs/SECURITY.md) for detailed ethical guidelines.
+1. Fork the repository
+2. Create a feature branch
+3. Write your module following the existing patterns in `modules/exploits/base.py`
+4. Add tests
+5. Submit a pull request
 
-## 🤝 Contributing
+All modules must define: `name`, `description`, `author`, `options`, and implement `run()`. Exploit modules should also implement `check()` for non-destructive vulnerability probing.
 
-We welcome contributions from the security research community!
+## License
 
-### How to Contribute
+MIT License. See [LICENSE](LICENSE) for details.
 
-1. **Fork the repository**
-2. **Create a feature branch** (`git checkout -b feature/new-exploit`)
-3. **Write your module** following the [Developer Guide](docs/DEVELOPER_GUIDE.md)
-4. **Add tests** for your module
-5. **Submit a pull request**
+## Credits
 
-### Module Development
-
-```python
-# Example: Creating a new exploit module
-from modules.exploits.base import ExploitModule, Option, ExploitResult
-
-class MyExploit(ExploitModule):
-    def __init__(self):
-        super().__init__()
-        self.name = "My Exploit"
-        self.description = "Description of exploit"
-        self.author = "Your Name"
-        self.owasp = ["LLM01"]  # OWASP category
-        
-        self.options = {
-            "TARGET_URL": Option(value="", required=True, description="Target URL")
-        }
-    
-    def check(self) -> ExploitResult:
-        # Verify target is vulnerable
-        pass
-    
-    def run(self) -> ExploitResult:
-        # Execute exploit
-        pass
-```
-
-See [DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) for complete instructions.
-
-## 🏆 Credits
-
-**Author:** Scott Thornton ([@perfecXion](https://github.com/perfecXion))  
-**Organization:** perfecXion.ai  
-**Research Focus:** AI/ML Security, LLM Vulnerabilities, Defensive AI Research
-
-### Acknowledgments
-
-- OWASP LLM Top 10 Project
-- Metasploit Framework (architectural inspiration)
-- AI Security research community
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Contact & Support
-
-- **Website:** [perfecXion.ai](https://perfecxion.ai)
-- **Issues:** [GitHub Issues](https://github.com/perfecXion/MetaLLM/issues)
-- **Email:** scott@perfecxion.ai
-
-
-## 🔗 Related Projects
-
-- [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
-- [Garak LLM Vulnerability Scanner](https://github.com/leondz/garak)
-- [PromptMap](https://github.com/utkusen/promptmap)
-- [LLM Guard](https://github.com/laiyer-ai/llm-guard)
-
-## 📈 Project Status
-
-- **Version:** 1.0.0
-- **Status:** Active Development
-- **Last Updated:** December 2025
-- **Python Support:** 3.9+
-
-## ⚠️ Disclaimer
-
-This tool is provided for educational and authorized security testing purposes only. The authors and contributors are not responsible for misuse or damage caused by this tool. Users are solely responsible for compliance with all applicable laws and regulations.
-
----
-
-**Built with 🛡️ by the AI Security Research Community**
+**Author:** Scott Thornton
+**Organization:** [perfecXion.ai](https://perfecxion.ai)
+**Contact:** scott@perfecxion.ai
+**Repository:** [github.com/perfecXion-ai/MetaLLM](https://github.com/perfecXion-ai/MetaLLM)
