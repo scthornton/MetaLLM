@@ -322,6 +322,4 @@ MIT License. See [LICENSE](LICENSE) for details.
 ## Credits
 
 **Author:** Scott Thornton
-**Organization:** [perfecXion.ai](https://perfecxion.ai)
 **Contact:** scott@perfecxion.ai
-**Repository:** [github.com/perfecXion-ai/MetaLLM](https://github.com/perfecXion-ai/MetaLLM)
