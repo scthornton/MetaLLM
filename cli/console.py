@@ -106,6 +106,7 @@ class MetaLLMConsole:
             "info": self.command_handler.handle_info,
             "set": self.command_handler.handle_set,
             "unset": self.command_handler.handle_unset,
+            "setg": self.command_handler.handle_setg,
             "options": self.command_handler.handle_options,
             "run": self.command_handler.handle_run,
             "exploit": self.command_handler.handle_run,  # Alias

@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metaLLM"
-version = "1.0.0-alpha"
-description = "The First Comprehensive AI Security Testing Framework"
+version = "2.0.0-alpha"
+description = "Metasploit-style AI/ML Security Testing Framework"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "Apache-2.0"}
+license = {text = "MIT"}
 authors = [
     {name = "Scott Thornton", email = "scott@perfecxion.ai"}
 ]
@@ -24,7 +24,7 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Information Technology",
     "Topic :: Security",
-    "License :: OSI Approved :: Apache Software License",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",

@@ -9,10 +9,7 @@ OWASP: LLM06 - Sensitive Information Disclosure
 
 import httpx
 from typing import Optional, Dict, Any, List
-from metaLLM.base.module import PostModule
-from metaLLM.base.option import Option, OptionType
-from metaLLM.base.result import Result, ResultStatus
-from metaLLM.base.target import LLMTarget
+from metallm.base import PostModule, Option, OptionType, Result, ResultStatus, LLMTarget
 
 
 class ContextExtraction(PostModule):
