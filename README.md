@@ -8,6 +8,8 @@
 
 MetaLLM is a Metasploit-inspired security testing framework purpose-built for AI and ML systems. It provides 61 working modules spanning LLM prompt attacks, RAG poisoning, agentic AI exploitation, MLOps infrastructure compromise, API security testing, and network-layer ML attacks -- all driven through an interactive CLI with tab completion, session tracking, and structured reporting mapped to MITRE ATLAS and OWASP LLM Top 10 2025.
 
+![MetaLLM Banner — Interactive console with search and target types](docs/images/metallm-banner.png)
+
 ## What Makes MetaLLM Different
 
 There are other AI security testing tools. Here is where MetaLLM fits relative to them:
@@ -52,6 +54,8 @@ python metallm.py
 
 ### Basic Workflow
 
+![Module selection, configuration, and option setting](docs/images/metallm-module-workflow.png)
+
 ```
 metalllm> use exploit/llm/prompt_injection
 metalllm exploit(prompt_injection)> show options
@@ -64,6 +68,8 @@ metalllm> sessions -l          # List active sessions
 metalllm> sessions -i 1        # Interact with session 1
 metalllm> report generate       # Generate assessment report
 ```
+
+![Exploit execution — multi-turn adaptive jailbreak with OWASP/MITRE mapping](docs/images/metallm-exploit-run.png)
 
 ### CLI Commands
 
